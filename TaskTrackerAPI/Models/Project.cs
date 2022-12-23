@@ -1,21 +1,34 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Text.Json.Serialization;
 
 namespace TaskTrackerAPI.Models
 {
-    public class Project
+    public enum ProjectStatus
     {
-        public int Id { get; set; }
+        NotStarted,
+        Active,
+        Completed
+    }
 
+    public class ProjectBody
+    {
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        public DateTime StartDate { get; set; } = DateTime.Now;
-        public DateTime CompletionDate { get; set; } = DateTime.Now.AddMonths(1);
+        public DateTime StartDate { get; set; } = DateTime.Today;
+        public DateTime CompletionDate { get; set; } = DateTime.Today.AddMonths(1);
 
-        //public enum Status { NotStarted, Active, Completed } // MSSQL does not support enums :(
-        public int Status { get; set; } = 0; // NotStarted = 0, Active = 1, Completed = 2
+        [Column(TypeName = "varchar(10)")]
+        [Range(0, 2)]
+        public ProjectStatus Status { get; set; } = ProjectStatus.NotStarted;
+
         public int Priority { get; set; } = 0;
+    }
 
-
+    public class Project: ProjectBody
+    {
+        public int Id { get; set; }
     }
 }

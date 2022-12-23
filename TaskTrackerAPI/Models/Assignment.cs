@@ -1,7 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaskTrackerAPI.Models
 {
+
     public class Assignment
     {
         public int Id { get; set; }
@@ -13,7 +16,9 @@ namespace TaskTrackerAPI.Models
         public int Status { get; set; } = 0; // ToDo = 0, InProgress = 1, Done = 2
         public string Description { get; set; } = string.Empty;
         public int Priority { get; set; } = 0;
-        public Project? ParentProject { get; set; }
+
+        [ForeignKey("ProjectForeignKey")]
+        public int ParentProjectId { get; set; }
 
     }
 }

@@ -38,7 +38,7 @@ namespace TaskTrackerAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentProjectId")
+                    b.Property<int>("ParentProjectId")
                         .HasColumnType("int");
 
                     b.Property<int>("Priority")
@@ -48,8 +48,6 @@ namespace TaskTrackerAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentProjectId");
 
                     b.ToTable("Assignments");
                 });
@@ -75,21 +73,13 @@ namespace TaskTrackerAPI.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("TaskTrackerAPI.Models.Assignment", b =>
-                {
-                    b.HasOne("TaskTrackerAPI.Models.Project", "ParentProject")
-                        .WithMany()
-                        .HasForeignKey("ParentProjectId");
-
-                    b.Navigation("ParentProject");
                 });
 #pragma warning restore 612, 618
         }
