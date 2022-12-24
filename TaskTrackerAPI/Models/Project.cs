@@ -24,6 +24,7 @@ namespace TaskTrackerAPI.Models
         [Range(0, 2)]
         public ProjectStatus Status { get; set; } = ProjectStatus.NotStarted;
 
+        [Range(0, 10)]
         public int Priority { get; set; } = 0;
     }
 

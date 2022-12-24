@@ -4,21 +4,33 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaskTrackerAPI.Models
 {
-
-    public class Assignment
+    public enum AssignmentStatus
     {
-        public int Id { get; set; }
+        ToDo, 
+        InProgress, 
+        Done
+    }
 
+    public class AssignmentBody
+    {
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        //public enum Status { ToDo, InProgress, Done}
-        public int Status { get; set; } = 0; // ToDo = 0, InProgress = 1, Done = 2
+        [Column(TypeName = "varchar(10)")]
+        [Range(0, 2)]
+        public AssignmentStatus Status { get; set; } = AssignmentStatus.ToDo;
+
         public string Description { get; set; } = string.Empty;
+
+        [Range(0, 10)]
         public int Priority { get; set; } = 0;
 
         [ForeignKey("ProjectForeignKey")]
-        public int ParentProjectId { get; set; }
+        public int ParentProjectId { get; set; } = 0;
+    }
 
+    public class Assignment: AssignmentBody
+    {
+        public int Id { get; set; }
     }
 }

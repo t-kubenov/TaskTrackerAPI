@@ -33,32 +33,48 @@ namespace TaskTrackerAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Assignment>> PostAssignment(Assignment assignment)
+        public async Task<ActionResult<Assignment>> PostAssignment(AssignmentBody assignmentBody)
         {
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid) 
+            {
                 return BadRequest(ModelState);
             }
-            assignment.Id = 0; // reset the id to avoid db conflict
+
+            if (assignmentBody.ParentProjectId != 0 && !ProjectExists(assignmentBody.ParentProjectId))
+            {
+                return BadRequest("Invalid Parent Project ID");
+            }
+
+            Assignment assignment = BodyToAssignment(assignmentBody);
+
             _context.Assignments.Add(assignment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetAssignment), new { id = assignment.Id }, assignment);
+            return CreatedAtAction(nameof(GetAssignment), new { assignmentId = assignment.Id }, assignment);
         }
 
-        [HttpPut]
-        public async Task<ActionResult> PutAssignment(Assignment assignment)
+        [HttpPut("{assignmentId}")]
+        public async Task<ActionResult> PutAssignment(int assignmentId, AssignmentBody assignmentBody)
         {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
-            if (!AssignmentExists(assignment.Id)) {
+
+            if (!AssignmentExists(assignmentId)) {
                 return NotFound();
             }
+
+            if (assignmentBody.ParentProjectId != 0 && !ProjectExists(assignmentBody.ParentProjectId))
+            {
+                return BadRequest("Invalid Parent Project ID");
+            }
+
+            Assignment assignment = BodyToAssignment(assignmentBody, assignmentId);
 
             _context.Entry(assignment).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             
-            return Ok();
+            return Ok(assignment);
         }
 
         [HttpDelete("{assignmentId}")]
@@ -79,7 +95,7 @@ namespace TaskTrackerAPI.Controllers
         [HttpPut("AssignParentProject")]
         public async Task<ActionResult> AssignParentProject(int assignmentId, int projectId)
         {
-            if (!AssignmentExists(assignmentId) || !_context.Projects.Any(x => x.Id == projectId))
+            if (!AssignmentExists(assignmentId) || !ProjectExists(projectId))
             {
                 return NotFound();
             }
@@ -89,7 +105,7 @@ namespace TaskTrackerAPI.Controllers
             assignment.ParentProjectId = projectId;
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(assignment);
         }
 
         [HttpGet("ViewProjectAssignments")]
@@ -100,10 +116,29 @@ namespace TaskTrackerAPI.Controllers
                 return NotFound();
             }
 
-            return await _context.Assignments.Where(x => x.ParentProjectId == projectId).ToListAsync();
+            return await _context.Assignments.Where(x => x.ParentProjectId == projectId).OrderByDescending(x => x.Priority).ToListAsync();
         }
 
 
         private bool AssignmentExists(int id) => _context.Assignments.Any(x => x.Id == id);
+
+
+        private bool ProjectExists(int id) => _context.Projects.Any(x => x.Id == id);
+
+
+        private Assignment BodyToAssignment(AssignmentBody assignmentBody, int assignmentId = 0)
+        {
+            Assignment assignment = new()
+            {
+                Id = assignmentId,
+                Name = assignmentBody.Name,
+                Status = assignmentBody.Status,
+                Description = assignmentBody.Description,
+                Priority = assignmentBody.Priority,
+                ParentProjectId= assignmentBody.ParentProjectId,
+            };
+
+            return assignment;
+        }
     }
 }
