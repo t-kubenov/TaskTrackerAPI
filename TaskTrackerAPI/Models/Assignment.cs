@@ -11,6 +11,7 @@ namespace TaskTrackerAPI.Models
         Done
     }
 
+    // same thing as with the projects
     public class AssignmentBody
     {
         [Required]

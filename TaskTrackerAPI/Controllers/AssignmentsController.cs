@@ -95,7 +95,7 @@ namespace TaskTrackerAPI.Controllers
         [HttpPut("AssignParentProject")]
         public async Task<ActionResult> AssignParentProject(int assignmentId, int projectId)
         {
-            if (!AssignmentExists(assignmentId) || !ProjectExists(projectId))
+            if (!AssignmentExists(assignmentId) || (projectId != 0 && !ProjectExists(projectId)))
             {
                 return NotFound();
             }
@@ -111,7 +111,7 @@ namespace TaskTrackerAPI.Controllers
         [HttpGet("ViewProjectAssignments")]
         public async Task<ActionResult<IEnumerable<Assignment>>> ViewProjectAssignments(int projectId)
         {
-            if (!_context.Projects.Any(x => x.Id == projectId))
+            if (projectId != 0 && !ProjectExists(projectId))
             {
                 return NotFound();
             }

@@ -12,6 +12,7 @@ namespace TaskTrackerAPI.Models
         Completed
     }
 
+    // separated project body from project ID to prevent users from messing with IDs during POSTs/PUTs
     public class ProjectBody
     {
         [Required]
