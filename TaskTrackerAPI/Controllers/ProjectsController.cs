@@ -48,7 +48,11 @@ namespace TaskTrackerAPI.Controllers
         /// Creates a project
         /// </summary>
         /// <param name="projectBody">All Project properties, except for the Id</param>
-        /// <remarks>The Name parameter is required.</remarks>
+        /// <remarks>The Name parameter is required.
+        /// <br>The StartDate should be strictly less than CompletionDate, their default values are set to today and one month from today respectively.</br>
+        /// <br>Status' value range is limited in the range from 0 to 2, meaning NotStarted, Active, Completed respectively.</br>
+        /// <br>Priority's range is 0 to 10.</br>
+        /// </remarks>
         /// <returns>The new project item</returns>
         /// <response code="201">Returns the newly created project</response>
         /// <response code="400">If the entered data is invalid</response>
@@ -81,6 +85,11 @@ namespace TaskTrackerAPI.Controllers
         /// </summary>
         /// <param name="projectId">The Id of an existing project to update</param>
         /// <param name="projectBody">Properties to replace in a project with specified Id</param>
+        /// <remarks>The Name parameter is required.
+        /// <br>The StartDate should be strictly less than CompletionDate, their default values are set to today and one month from today respectively.</br>
+        /// <br>Status' value range is limited in the range from 0 to 2, meaning NotStarted, Active, Completed respectively.</br>
+        /// <br>Priority's range is 0 to 10.</br>
+        /// </remarks>
         /// <returns>Updated project item</returns>
         /// <response code="201">Returns the updated project</response>
         /// <response code="400">If the entered data is invalid</response>
@@ -179,7 +188,7 @@ namespace TaskTrackerAPI.Controllers
 
             if (!searchString.IsNullOrEmpty())
             {
-                result = result.Where( x => x.Name.Contains(searchString) );
+                result = result.Where( x => x.Name.Contains(searchString!) ); // Forgiving null because null check already exists.
             }
 
             if (startDate.HasValue) 
