@@ -50,7 +50,7 @@ namespace TaskTrackerAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Assignments");
+                    b.ToTable("Assignments", (string)null);
                 });
 
             modelBuilder.Entity("TaskTrackerAPI.Models.Project", b =>
@@ -80,7 +80,7 @@ namespace TaskTrackerAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 #pragma warning restore 612, 618
         }

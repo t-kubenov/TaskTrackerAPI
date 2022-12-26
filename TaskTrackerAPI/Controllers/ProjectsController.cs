@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace TaskTrackerAPI.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectsController : ControllerBase
@@ -17,13 +18,22 @@ namespace TaskTrackerAPI.Controllers
             _context = context;
         }
         
+
+        /// <summary>
+        /// Gets all projects
+        /// </summary>
+        /// <returns>Returns a list of all projects in the database</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
             return await _context.Projects.ToListAsync();
         }
 
-
+        /// <summary>
+        /// Retrieves a project by ID
+        /// </summary>
+        /// <param name="projectId">ID of a project to retsrieve</param>
+        /// <returns>Object of a sought-for project</returns>
         [HttpGet("{projectId}")]
         public async Task<ActionResult<IEnumerable<Project>>> GetProject(int projectId)
         {
@@ -34,8 +44,17 @@ namespace TaskTrackerAPI.Controllers
             return Ok(project);
         }
 
-
+        /// <summary>
+        /// Creates a project
+        /// </summary>
+        /// <param name="projectBody">All Project properties, except for the Id</param>
+        /// <remarks>The Name parameter is required.</remarks>
+        /// <returns>The new project item</returns>
+        /// <response code="201">Returns the newly created project</response>
+        /// <response code="400">If the entered data is invalid</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Project>> PostProject(ProjectBody projectBody)
         {
             if (!ModelState.IsValid)
@@ -57,7 +76,19 @@ namespace TaskTrackerAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Updates a project
+        /// </summary>
+        /// <param name="projectId">The Id of an existing project to update</param>
+        /// <param name="projectBody">Properties to replace in a project with specified Id</param>
+        /// <returns>Updated project item</returns>
+        /// <response code="201">Returns the updated project</response>
+        /// <response code="400">If the entered data is invalid</response>
+        /// <response code="404">If the project to update is not found</response>
         [HttpPut("{projectId}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> PutProject(int projectId, ProjectBody projectBody)
         {
             if (!ModelState.IsValid) {
@@ -81,8 +112,16 @@ namespace TaskTrackerAPI.Controllers
             return Ok(project);
         }
 
-
+        /// <summary>
+        /// Deletes a project
+        /// </summary>
+        /// <param name="projectId">The Id of a project to delete</param>
+        /// <remarks>Also modifies assignments of this project by setting their parent project Id to 0</remarks>
+        /// <response code="200">Project deleted successfully</response>
+        /// <response code="404">If the project to delete is not found</response>
         [HttpDelete("{projectId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteProject(int projectId)
         {
             var project = await _context.Projects.FindAsync(projectId);
@@ -91,13 +130,36 @@ namespace TaskTrackerAPI.Controllers
                 return NotFound();
             }
 
+            // Modify assignments that have deleted project as their parent project
+            var affectedAssignments = _context.Assignments.Where(x => x.ParentProjectId == projectId);
+            foreach (Assignment assignment in affectedAssignments)
+            {
+                assignment.ParentProjectId = 0;
+            }
+
+
             _context.Projects.Remove(project);
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
-        //TODO: Fix Status
+        /// <summary>
+        /// Filters existing projects by the entered parameters
+        /// </summary>
+        /// <param name="searchString">Search string in project names. Case insensitive</param>
+        /// <param name="startDate">Exact start date. Overrides minStartDate and maxStartDate</param>
+        /// <param name="minStartDate">Lower bound for start date. Non-strict</param>
+        /// <param name="maxStartDate">Upper bound for start date. Non-strict</param>
+        /// <param name="completionDate">Exact completion date. Overrides minCompletionDate and maxCompletionDate</param>
+        /// <param name="minCompletionDate">Lower bound for completion date. Non-strict</param>
+        /// <param name="maxCompletionDate">Upper bound for completion date. Non-strict</param>
+        /// <param name="status">Exact status Id. 0 for Not Started, 1 for Active, 2 for Completed</param>
+        /// <param name="priority">Exact priority value, ranges from 0 to 10. Overrides minPriority and maxPriority</param>
+        /// <param name="minPriority">Upper bound for priority. Non-strict</param>
+        /// <param name="maxPriority">Lower bound for priority. Non-strict</param>
+        /// <remarks>All parameters are nullable, running the method without them returns all projects.</remarks>
+        /// <returns>List of filtered Project entities</returns>
         [HttpGet("FilterProjects")]
         public ActionResult<IEnumerable<Project>> FilterProjects(
             string? searchString,
@@ -190,6 +252,7 @@ namespace TaskTrackerAPI.Controllers
         private bool BodyDateValid(ProjectBody projectBody) => projectBody.StartDate < projectBody.CompletionDate;
 
 
+        // Simple action to convert AssignmentBody to Assignment
         private Project BodyToProject(ProjectBody projectBody, int projectId = 0)
         {
             Project project = new()

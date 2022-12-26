@@ -287,3 +287,5 @@ C:\Users\Thomas\Documents\GitHub\TaskTrackerAPI\TaskTrackerAPI\bin\Debug\net6.0\
 C:\Users\Thomas\Documents\GitHub\TaskTrackerAPI\TaskTrackerAPI\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 C:\Users\Thomas\Documents\GitHub\TaskTrackerAPI\TaskTrackerAPI\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\Thomas\Documents\GitHub\TaskTrackerAPI\TaskTrackerAPI\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\Users\Thomas\Documents\GitHub\TaskTrackerAPI\TaskTrackerAPI\bin\Debug\net6.0\TaskTrackerAPI.xml
+C:\Users\Thomas\Documents\GitHub\TaskTrackerAPI\TaskTrackerAPI\obj\Debug\net6.0\TaskTrackerAPI.xml

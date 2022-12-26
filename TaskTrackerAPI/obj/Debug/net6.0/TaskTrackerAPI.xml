@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaskTrackerAPI</name>
+    </assembly>
+    <members>
+        <member name="M:TaskTrackerAPI.Controllers.AssignmentsController.GetAssignments">
+            <summary>
+            Gets all assignments
+            </summary>
+            <returns>Returns a list of all assignments in the database</returns>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.AssignmentsController.GetAssignment(System.Int32)">
+            <summary>
+            Retrieves an assignment by ID
+            </summary>
+            <param name="assignmentId">ID of an assignment to retrieve</param>
+            <returns>Object of a sought-for assignment</returns>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.AssignmentsController.PostAssignment(TaskTrackerAPI.Models.AssignmentBody)">
+            <summary>
+            Creates an assignment
+            </summary>
+            <param name="assignmentBody">All Assignment properties, except for the Id</param>
+            <remarks>The Name parameter is required.</remarks>
+            <returns>The new assignment item</returns>
+            <response code="201">Returns the newly created assignment</response>
+            <response code="400">If the entered data is invalid</response>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.AssignmentsController.PutAssignment(System.Int32,TaskTrackerAPI.Models.AssignmentBody)">
+            <summary>
+            Updates an assignment
+            </summary>
+            <param name="assignmentId">The Id of an existing assignment to update</param>
+            <param name="assignmentBody">Properties to replace in an assignment with specified Id</param>
+            <remarks>Parent Project Id can be set to 0 to remove the assignment from a project</remarks>
+            <returns>Updated assignment item</returns>
+            <response code="201">Returns the updated assignment</response>
+            <response code="400">If the entered data is invalid</response>
+            <response code="404">If the assignment to update is not found</response>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.AssignmentsController.DeleteAssignment(System.Int32)">
+            <summary>
+            Deletes an assignment
+            </summary>
+            <param name="assignmentId">The Id of an assignment to delete</param>
+            <response code="200">Assignment deleted successfully</response>
+            <response code="404">If the assignment to delete is not found</response>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.AssignmentsController.AssignParentProject(System.Int32,System.Int32)">
+            <summary>
+            Assigns a parent project
+            </summary>
+            <param name="assignmentId">The assignment in which the Parent Project Id should be modified</param>
+            <param name="projectId">Parent Project Id to set</param>
+            <returns>The modified assignment</returns> 
+            <remarks>Parent Project Id can be set to 0 to remove the assignment from a project</remarks>
+            <response code="201">Returns the updated assignment</response>
+            <response code="404">If the assignment to update is not found</response>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.AssignmentsController.ViewProjectAssignments(System.Int32)">
+            <summary>
+            View Assignments tied to a Project, ordered by priority
+            </summary>
+            <param name="projectId">Id of the project</param>
+            <remarks>0 can be entered as parentId to see assignments without a parent project</remarks>
+            <returns>List of assignments from the project</returns>
+            <response code="404">Project with entered Id is not found</response>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.ProjectsController.GetProjects">
+            <summary>
+            Gets all projects
+            </summary>
+            <returns>Returns a list of all projects in the database</returns>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.ProjectsController.GetProject(System.Int32)">
+            <summary>
+            Retrieves a project by ID
+            </summary>
+            <param name="projectId">ID of a project to retsrieve</param>
+            <returns>Object of a sought-for project</returns>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.ProjectsController.PostProject(TaskTrackerAPI.Models.ProjectBody)">
+            <summary>
+            Creates a project
+            </summary>
+            <param name="projectBody">All Project properties, except for the Id</param>
+            <remarks>The Name parameter is required.</remarks>
+            <returns>The new project item</returns>
+            <response code="201">Returns the newly created project</response>
+            <response code="400">If the entered data is invalid</response>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.ProjectsController.PutProject(System.Int32,TaskTrackerAPI.Models.ProjectBody)">
+            <summary>
+            Updates a project
+            </summary>
+            <param name="projectId">The Id of an existing project to update</param>
+            <param name="projectBody">Properties to replace in a project with specified Id</param>
+            <returns>Updated project item</returns>
+            <response code="201">Returns the updated project</response>
+            <response code="400">If the entered data is invalid</response>
+            <response code="404">If the project to update is not found</response>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.ProjectsController.DeleteProject(System.Int32)">
+            <summary>
+            Deletes a project
+            </summary>
+            <param name="projectId">The Id of a project to delete</param>
+            <response code="200">Project deleted successfully</response>
+            <response code="404">If the project to delete is not found</response>
+        </member>
+        <member name="M:TaskTrackerAPI.Controllers.ProjectsController.FilterProjects(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Filters existing projects by the entered parameters
+            </summary>
+            <param name="searchString">Search string in project names. Case insensitive</param>
+            <param name="startDate">Exact start date. Overrides minStartDate and maxStartDate</param>
+            <param name="minStartDate">Lower bound for start date. Non-strict</param>
+            <param name="maxStartDate">Upper bound for start date. Non-strict</param>
+            <param name="completionDate">Exact completion date. Overrides minCompletionDate and maxCompletionDate</param>
+            <param name="minCompletionDate">Lower bound for completion date. Non-strict</param>
+            <param name="maxCompletionDate">Upper bound for completion date. Non-strict</param>
+            <param name="status">Exact status Id. 0 for Not Started, 1 for Active, 2 for Completed</param>
+            <param name="priority">Exact priority value, ranges from 0 to 10. Overrides minPriority and maxPriority</param>
+            <param name="minPriority">Upper bound for priority. Non-strict</param>
+            <param name="maxPriority">Lower bound for priority. Non-strict</param>
+            <remarks>All parameters are nullable, running the method without them returns all projects.</remarks>
+            <returns>List of filtered Project entities</returns>
+        </member>
+        <member name="T:TaskTrackerAPI.Migrations.TaskTracker">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskTrackerAPI.Migrations.TaskTracker.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskTrackerAPI.Migrations.TaskTracker.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskTrackerAPI.Migrations.TaskTracker.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaskTrackerAPI.Migrations.projectStatusEnum">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskTrackerAPI.Migrations.projectStatusEnum.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskTrackerAPI.Migrations.projectStatusEnum.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskTrackerAPI.Migrations.projectStatusEnum.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaskTrackerAPI.Migrations.updatedAssignments">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskTrackerAPI.Migrations.updatedAssignments.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskTrackerAPI.Migrations.updatedAssignments.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskTrackerAPI.Migrations.updatedAssignments.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
